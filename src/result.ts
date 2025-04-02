@@ -43,7 +43,7 @@ export class Result<T, E> {
   }
 
   // Map the value if it's Ok, otherwise return a default value
-  map_or(fn: (value: T) => T, defaultValue: T): T {
+  mapOr(fn: (value: T) => T, defaultValue: T): T {
     if (this.kind === ResultKind.Ok) {
       return fn(this.value as T);
     }
