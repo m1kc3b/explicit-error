@@ -25,6 +25,7 @@ Ok\<T> contains a successfull value, and provides methods to handle it.
 
 Err\<E> contains an error and prevents use without verification.
 
+<!-- 
 ```
 type User = { id: number; name: string };
 
@@ -38,7 +39,6 @@ const user = findUserById(2);
 console.log(user.unwrapOr({ id: 0, name: "Invité" })); // { id: 0, name: "Invité" }
 
 ```
-
 ## Examples
 
 ### 1 - Retrieving a value from an object (without undefined)
@@ -179,4 +179,4 @@ console.log(maybeValue.unwrapOr("Default"));
 const result: Result<number, string> = ok(42);
 console.log(result.isOk() ? result.unwrap() : "Error");
 
-```
+``` -->
