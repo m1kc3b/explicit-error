@@ -1,55 +1,57 @@
-export type Option<T> = Some<T> | None;
-
-export class Some<T> {
-  constructor(public value: T) {}
-
-  isSome(): this is Some<T> {
-    return true;
-  }
-
-  isNone(): this is None {
-    return false;
-  }
-
-  unwrap(): T {
-    return this.value;
-  }
-
-  unwrapOr(defaultValue: T): T {
-    return this.value;
-  }
-
-  map<U>(fn: (value: T) => U): Option<U> {
-    return new Some(fn(this.value));
-  }
+export enum OptionKind {
+  Some = "Some",
+  None = "None",
 }
 
-export class None {
-  isSome(): this is Some<never> { 
-    return false;
+export class Option<T> {
+  constructor(public kind: OptionKind, public value?: T) {}
+
+  static Some<T>(value: T): Option<T> {
+    return new Option(OptionKind.Some, value);
   }
 
-  isNone(): this is None {
-    return true;
+  static None<T>(): Option<T> {
+    return new Option(OptionKind.None);
   }
 
-  unwrap(): never {
+  // Map the value if it's Some, otherwise return None
+  isSome(): this is Option<T> {
+    return this.kind === OptionKind.Some;
+  } 
+
+   // Check if the option is Some and matches the predicate
+   isSomeAnd(predicate: T): boolean {
+    if (this.kind === OptionKind.Some) {
+      return this.value === predicate;
+    }
+    throw new Error("Called isSomeAnd on None");
+  }
+
+  // Map the value if it's None, otherwise return Some
+  isNone(): this is Option<T> {
+    return this.kind === OptionKind.None;
+  }
+
+  // Map the value if it's None, and the value matches the predicate
+  isNoneAnd(predicate: T): this is Option<T> {
+    if (this.kind === OptionKind.None) {
+      return this.value === predicate;
+    }
+    throw new Error("Called isNoneAnd on Some");
+  }
+
+  // Map the value if it's Some, otherwise throw an Error
+  unwrap(): T {
+    if (this.kind === OptionKind.Some) {
+      return this.value as T;
+    }
     throw new Error("Tried to unwrap None");
   }
 
-  unwrapOr<T>(defaultValue: T): T {
-    return defaultValue;
+  // Map the value if it's Some, otherwise return a default value
+  unwrapOrDefault(defaultValue: T): T {
+    return this.kind === OptionKind.Some ? (this.value as T) : defaultValue;
   }
+  
 
-  map<U>(fn: (value: any) => U): Option<U> {
-    return new None();
-  } 
-}
-
-export function some<T>(value: T): Option<T> {
-  return new Some(value);
-}
-
-export function none<T>(): Option<T> {
-  return new None();
 }
